@@ -18,6 +18,9 @@ public class AELFMOTD implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger("aelf-motd");
 
+	// Variable pour stocker la dernière date d'exécution
+	private LocalDate lastExecutionDate = null;
+
 	@Override
 	public void onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
@@ -28,55 +31,62 @@ public class AELFMOTD implements ModInitializer {
 
 		// Register an event handler that runs at the end of each server tick
 		ServerTickEvents.START_SERVER_TICK.register(server -> {
+			// Vérifier si le code s'exécute sur le serveur (pas côté client)
 			if (server.isRemote()) {
-				// Execute the following code on the server side only
-				try {
+				// Récupérer la date actuelle
+				LocalDate currentDate = LocalDate.now();
 
-					LocalDate currentDate = LocalDate.now();
+				// Vérifier si la date a changé depuis la dernière exécution
+				if (lastExecutionDate == null || !lastExecutionDate.equals(currentDate)) {
+					// Mettre à jour la date de la dernière exécution
+					lastExecutionDate = currentDate;
 
-					// Convertir la date en chaîne de caractères au format ISO 8601
-					String isoDate = currentDate.toString();
+					// Exécuter le code souhaité
+					try {
+						// Convertir la date en chaîne de caractères au format ISO 8601
+						String isoDate = currentDate.toString();
 
-					// URL de l'API
-					String url = "https://api.aelf.org/v1/informations/" + isoDate + "/romain";
+						// URL de l'API
+						String url = "https://api.aelf.org/v1/informations/" + isoDate + "/romain";
 
-					// Créer une connexion HTTP
-					HttpURLConnection httpClient = (HttpURLConnection) new URL(url).openConnection();
+						// Créer une connexion HTTP
+						HttpURLConnection httpClient = (HttpURLConnection) new URL(url).openConnection();
 
-					// Définir la méthode de requête
-					httpClient.setRequestMethod("GET");
-					httpClient.setRequestProperty("Accept", "*/*");
+						// Définir la méthode de requête
+						httpClient.setRequestMethod("GET");
+						httpClient.setRequestProperty("Accept", "*/*");
 
-					// Lire la réponse
-					BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()));
-					String inputLine;
-					StringBuilder content = new StringBuilder();
-					while ((inputLine = in.readLine()) != null) {
-						content.append(inputLine);
+						// Lire la réponse
+						BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()));
+						String inputLine;
+						StringBuilder content = new StringBuilder();
+						while ((inputLine = in.readLine()) != null) {
+							content.append(inputLine);
+						}
+
+						// Fermer les flux
+						in.close();
+						httpClient.disconnect();
+
+						// Convertir le contenu en chaîne
+						String jsonResponse = content.toString();
+
+						// Extraction manuelle des données JSON
+						String couleur = extractValue(jsonResponse, "couleur");
+						String jourLiturgiqueNom = extractValue(jsonResponse, "jour_liturgique_nom");
+
+						// Afficher les informations récupérées
+						LOGGER.info("Couleur liturgique : " + couleur);
+						LOGGER.info("Nom liturgique du jour : " + jourLiturgiqueNom);
+
+						String motd = server.getServerMotd() + "\n" + couleur(couleur) + jourLiturgiqueNom;
+
+						// Vous pouvez aussi mettre à jour le motd ou d'autres fonctionnalités ici
+						server.setMotd(motd);
+
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-
-					// Fermer les flux
-					in.close();
-					httpClient.disconnect();
-
-					// Convertir le contenu en chaîne
-					String jsonResponse = content.toString();
-
-					// Extraction manuelle des données JSON
-					String couleur = extractValue(jsonResponse, "couleur");
-					String jourLiturgiqueNom = extractValue(jsonResponse, "jour_liturgique_nom");
-
-					// Afficher les informations récupérées
-					LOGGER.info("Couleur liturgique : " + couleur);
-					LOGGER.info("Nom liturgique du jour : " + jourLiturgiqueNom);
-
-					String motd = server.getServerMotd() + "\n" + couleur(couleur) + jourLiturgiqueNom;
-
-					// Vous pouvez aussi mettre à jour le motd ou d'autres fonctionnalités ici
-					server.setMotd(motd);
-
-				} catch (Exception e) {
-					e.printStackTrace();
 				}
 			}
 		});
@@ -95,7 +105,7 @@ public class AELFMOTD implements ModInitializer {
 			default:
 				return "§f";
 		}
-    }
+	}
 
 	private static String extractValue(String json, String key) {
 		// Trouver la position de la clé
@@ -130,5 +140,4 @@ public class AELFMOTD implements ModInitializer {
 			return json.substring(startIndex, endIndex).trim();
 		}
 	}
-
 }
