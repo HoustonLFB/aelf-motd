@@ -3,7 +3,7 @@
 	"id": "aelf-motd",
 	"version": "${version}",
 	"name": "AELF-MOTD",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Affiche en MOTD les informations lithurgiques du jour.",
 	"authors": [
 		"Me!"
 	],
