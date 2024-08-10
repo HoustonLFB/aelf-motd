@@ -3,7 +3,7 @@
 	"id": "aelf-motd",
 	"version": "${version}",
 	"name": "AELF-MOTD",
-	"description": "Affiche en MOTD les informations lithurgiques du jour.",
+	"description": "Affiche en MOTD les informations liturgiques du jour.",
 	"authors": [
 		"Me!"
 	],
