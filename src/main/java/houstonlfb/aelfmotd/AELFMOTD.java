@@ -7,9 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
 public class AELFMOTD implements ModInitializer {
@@ -19,7 +21,7 @@ public class AELFMOTD implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("aelf-motd");
 
 	// Variable pour stocker la dernière date d'exécution
-	private LocalDate lastExecutionDate = null;
+	private String lastExecutionDate = null;
 
 	@Override
 	public void onInitialize() {
@@ -27,14 +29,14 @@ public class AELFMOTD implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		LOGGER.info("Hello AELF !");
+		LOGGER.info("AELF MOTD starting...");
 
 		// Register an event handler that runs at the end of each server tick
 		ServerTickEvents.START_SERVER_TICK.register(server -> {
 			// Vérifier si le code s'exécute sur le serveur (pas côté client)
 			if (server.isRemote()) {
 				// Récupérer la date actuelle
-				LocalDate currentDate = LocalDate.now();
+				String currentDate = currentDate();
 
 				// Vérifier si la date a changé depuis la dernière exécution
 				if (lastExecutionDate == null || !lastExecutionDate.equals(currentDate)) {
@@ -43,30 +45,7 @@ public class AELFMOTD implements ModInitializer {
 
 					// Exécuter le code souhaité
 					try {
-						// Convertir la date en chaîne de caractères au format ISO 8601
-						String isoDate = currentDate.toString();
-
-						// URL de l'API
-						String url = "https://api.aelf.org/v1/informations/" + isoDate + "/romain";
-
-						// Créer une connexion HTTP
-						HttpURLConnection httpClient = (HttpURLConnection) new URL(url).openConnection();
-
-						// Définir la méthode de requête
-						httpClient.setRequestMethod("GET");
-						httpClient.setRequestProperty("Accept", "*/*");
-
-						// Lire la réponse
-						BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream()));
-						String inputLine;
-						StringBuilder content = new StringBuilder();
-						while ((inputLine = in.readLine()) != null) {
-							content.append(inputLine);
-						}
-
-						// Fermer les flux
-						in.close();
-						httpClient.disconnect();
+						StringBuilder content = apiCall();
 
 						// Convertir le contenu en chaîne
 						String jsonResponse = content.toString();
@@ -75,17 +54,21 @@ public class AELFMOTD implements ModInitializer {
 						String couleur = extractValue(jsonResponse, "couleur");
 						String jourLiturgiqueNom = extractValue(jsonResponse, "jour_liturgique_nom");
 
+                        assert jourLiturgiqueNom != null;
+                        jourLiturgiqueNom = decodeUnicodeEscapes(jourLiturgiqueNom);
+
 						// Afficher les informations récupérées
 						LOGGER.info("Couleur liturgique : " + couleur);
 						LOGGER.info("Nom liturgique du jour : " + jourLiturgiqueNom);
 
-						String motd = server.getServerMotd() + "\n" + couleur(couleur) + jourLiturgiqueNom;
+                        assert couleur != null;
+                        String motd = server.getServerMotd() + "\n" + couleur(couleur) + jourLiturgiqueNom;
 
 						// Vous pouvez aussi mettre à jour le motd ou d'autres fonctionnalités ici
 						server.setMotd(motd);
 
 					} catch (Exception e) {
-						e.printStackTrace();
+						LOGGER.error(e.getMessage());
 					}
 				}
 			}
@@ -98,7 +81,7 @@ public class AELFMOTD implements ModInitializer {
             case "violet" -> "§5";
             case "rose" -> "§d";
             case "bleu" -> "§9";
-            case "vert" -> "&2";
+            case "vert" -> "§2";
             default -> "§f";
         };
 	}
@@ -135,5 +118,66 @@ public class AELFMOTD implements ModInitializer {
 			// Retourner la valeur extraite
 			return json.substring(startIndex, endIndex).trim();
 		}
+	}
+
+	public static String decodeUnicodeEscapes(String input) {
+		StringBuilder output = new StringBuilder();
+		int length = input.length();
+		for (int i = 0; i < length; i++) {
+			char ch = input.charAt(i);
+			if (ch == '\\' && i + 1 < length && input.charAt(i + 1) == 'u') {
+				// Find the Unicode escape sequence
+				if (i + 5 < length) {
+					String unicode = input.substring(i + 2, i + 6);
+					try {
+						// Convert it to the actual character
+						char unicodeChar = (char) Integer.parseInt(unicode, 16);
+						output.append(unicodeChar);
+						i += 5; // Skip past the Unicode escape sequence
+					} catch (NumberFormatException e) {
+						output.append(ch); // Append back the original characters if parsing fails
+					}
+				} else {
+					output.append(ch); // Append back the original characters if it's not a full sequence
+				}
+			} else {
+				output.append(ch);
+			}
+		}
+		return output.toString();
+	}
+
+	private static String currentDate() {
+
+		LocalDate currentDate = LocalDate.now();
+		return currentDate.toString();
+	}
+
+	private static StringBuilder apiCall() throws IOException {
+
+		String currentDate = currentDate();
+		// URL de l'API
+		String url = "https://api.aelf.org/v1/informations/" + currentDate + "/romain";
+
+		// Créer une connexion HTTP
+		HttpURLConnection httpClient = (HttpURLConnection) new URL(url).openConnection();
+
+		// Définir la méthode de requête
+		httpClient.setRequestMethod("GET");
+		httpClient.setRequestProperty("Accept", "*/*");
+
+		// Lire la réponse
+		BufferedReader in = new BufferedReader(new InputStreamReader(httpClient.getInputStream(), StandardCharsets.UTF_8));
+		String inputLine;
+		StringBuilder content = new StringBuilder();
+		while ((inputLine = in.readLine()) != null) {
+			content.append(inputLine);
+		}
+
+		// Fermer les flux
+		in.close();
+		httpClient.disconnect();
+
+		return content;
 	}
 }
