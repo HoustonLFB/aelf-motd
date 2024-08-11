@@ -39,8 +39,8 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	implementation 'org.json:json:20230227'
-	
+	//JSON
+    implementation 'org.json:json:20231013'
 }
 
 processResources {
