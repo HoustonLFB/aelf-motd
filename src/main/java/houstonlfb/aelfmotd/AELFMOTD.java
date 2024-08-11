@@ -93,18 +93,14 @@ public class AELFMOTD implements ModInitializer {
 	}
 
 	private static String couleur(String couleur) {
-		switch (couleur) {
-			case "rouge":
-				return "§4";
-			case "violet":
-				return "§5";
-			case "rose":
-				return "§d";
-			case "bleu":
-				return "§9";
-			default:
-				return "§f";
-		}
+        return switch (couleur) {
+            case "rouge" -> "§4";
+            case "violet" -> "§5";
+            case "rose" -> "§d";
+            case "bleu" -> "§9";
+            case "vert" -> "&2";
+            default -> "§f";
+        };
 	}
 
 	private static String extractValue(String json, String key) {
