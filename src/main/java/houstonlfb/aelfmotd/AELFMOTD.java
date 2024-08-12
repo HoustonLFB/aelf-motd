@@ -53,16 +53,27 @@ public class AELFMOTD implements ModInitializer {
 						// Extraction manuelle des données JSON
 						String couleur = extractValue(jsonResponse, "couleur");
 						String jourLiturgiqueNom = extractValue(jsonResponse, "jour_liturgique_nom");
+						String fete = extractValue(jsonResponse, "fete");
 
                         assert jourLiturgiqueNom != null;
+						assert couleur != null;
+						assert fete != null;
+
                         jourLiturgiqueNom = decodeUnicodeEscapes(jourLiturgiqueNom);
+						fete = decodeUnicodeEscapes(fete);
 
 						// Afficher les informations récupérées
 						LOGGER.info("Couleur liturgique : " + couleur);
 						LOGGER.info("Nom liturgique du jour : " + jourLiturgiqueNom);
+						LOGGER.info("Fete : " + fete);
 
-                        assert couleur != null;
-                        String motd = server.getServerMotd() + "\n" + couleur(couleur) + jourLiturgiqueNom;
+						String motd = server.getServerMotd() + "\n" + couleur(couleur);
+
+						if (jourLiturgiqueNom.equals("de la férie")) {
+							motd += fete;
+						} else {
+							motd += jourLiturgiqueNom;
+						}
 
 						// Vous pouvez aussi mettre à jour le motd ou d'autres fonctionnalités ici
 						server.setMotd(motd);
