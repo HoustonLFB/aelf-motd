@@ -32,7 +32,7 @@ public class AELFMOTD implements ModInitializer {
 		LOGGER.info("AELF MOTD starting...");
 
 		// Register an event handler that runs at the end of each server tick
-		ServerTickEvents.START_SERVER_TICK.register(server -> {
+		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			// Vérifier si le code s'exécute sur le serveur (pas côté client)
 			if (server.isRemote()) {
 				// Récupérer la date actuelle
@@ -75,7 +75,6 @@ public class AELFMOTD implements ModInitializer {
 							motd += jourLiturgiqueNom;
 						}
 
-						// Vous pouvez aussi mettre à jour le motd ou d'autres fonctionnalités ici
 						server.setMotd(motd);
 
 					} catch (Exception e) {
