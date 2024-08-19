@@ -19,6 +19,7 @@ public class AELFMOTD implements ModInitializer {
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger("aelf-motd");
+	private static final String SERVER_PROPERTIES_PATH = "server.properties";
 
 	// Variable pour stocker la dernière date d'exécution
 	private String lastExecutionDate = null;
