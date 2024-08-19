@@ -136,7 +136,7 @@ public class AELFMOTD implements ModInitializer {
 
 	        // Charger le fichier server.properties
 	        try {
-			InputStream input = new FileInputStream(SERVER_PROPERTIES_PATH) 
+			InputStream input = new FileInputStream(SERVER_PROPERTIES_PATH); 
 	            properties.load(input);
 	        } catch (Exception e) {
 		LOGGER.error(e.getMessage());
