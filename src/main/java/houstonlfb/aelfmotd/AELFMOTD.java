@@ -138,7 +138,9 @@ public class AELFMOTD implements ModInitializer {
 	        try {
 			InputStream input = new FileInputStream(SERVER_PROPERTIES_PATH) 
 	            properties.load(input);
-	        }
+	        } catch (Exception e) {
+		LOGGER.error(e.getMessage());
+					}
 		// Lire le MOTD actuel
 	        String currentMotd = properties.getProperty("motd", "A Minecraft Server");
 	        return currentMotd;
