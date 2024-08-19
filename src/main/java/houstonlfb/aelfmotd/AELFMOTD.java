@@ -67,7 +67,7 @@ public class AELFMOTD implements ModInitializer {
 						LOGGER.info("Nom liturgique du jour : " + jourLiturgiqueNom);
 						LOGGER.info("Fete : " + fete);
 
-						String motd = server.getServerMotd() + "\n" + couleur(couleur);
+						String motd = getMotdFromProperties() + "\n" + couleur(couleur);
 
 						if (jourLiturgiqueNom.equals("de la férie")) {
 							motd += fete;
@@ -130,6 +130,18 @@ public class AELFMOTD implements ModInitializer {
 		}
 	}
 
+	public static String getMotdFromProperties() {
+		Properties properties = new Properties();
+
+	        // Charger le fichier server.properties
+	        try (InputStream input = new FileInputStream(SERVER_PROPERTIES_PATH)) {
+	            properties.load(input);
+	        }
+		// Lire le MOTD actuel
+	        String currentMotd = properties.getProperty("motd", "A Minecraft Server");
+	        return currentMotd;
+	}
+	
 	public static String decodeUnicodeEscapes(String input) {
 		StringBuilder output = new StringBuilder();
 		int length = input.length();
