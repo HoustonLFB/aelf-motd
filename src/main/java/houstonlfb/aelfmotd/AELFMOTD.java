@@ -23,6 +23,7 @@ public class AELFMOTD implements ModInitializer {
 
 	// Variable pour stocker la dernière date d'exécution
 	private String lastExecutionDate = null;
+	private String currentMotd = null;
 
 	@Override
 	public void onInitialize() {
@@ -38,6 +39,10 @@ public class AELFMOTD implements ModInitializer {
 			if (server.isRemote()) {
 				// Récupérer la date actuelle
 				String currentDate = currentDate();
+
+				if (currentMotd == null) {
+					currentMotd = server.getServerMotd();
+				}
 
 				// Vérifier si la date a changé depuis la dernière exécution
 				if (lastExecutionDate == null || !lastExecutionDate.equals(currentDate)) {
@@ -68,7 +73,7 @@ public class AELFMOTD implements ModInitializer {
 						LOGGER.info("Nom liturgique du jour : " + jourLiturgiqueNom);
 						LOGGER.info("Fete : " + fete);
 
-						String motd = getMotdFromProperties() + "\n" + couleur(couleur);
+						String motd = currentMotd + "\n" + couleur(couleur);
 
 						if (jourLiturgiqueNom.equals("de la férie")) {
 							motd += fete;
@@ -129,21 +134,6 @@ public class AELFMOTD implements ModInitializer {
 			// Retourner la valeur extraite
 			return json.substring(startIndex, endIndex).trim();
 		}
-	}
-
-	public static String getMotdFromProperties() {
-		Properties properties = new Properties();
-
-	        // Charger le fichier server.properties
-	        try {
-			InputStream input = new FileInputStream(SERVER_PROPERTIES_PATH); 
-	            properties.load(input);
-	        } catch (Exception e) {
-		LOGGER.error(e.getMessage());
-					}
-		// Lire le MOTD actuel
-	        String currentMotd = properties.getProperty("motd", "A Minecraft Server");
-	        return currentMotd;
 	}
 	
 	public static String decodeUnicodeEscapes(String input) {
