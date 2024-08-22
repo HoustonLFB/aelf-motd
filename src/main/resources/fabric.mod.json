@@ -1,38 +1,38 @@
 {
-	"schemaVersion": 1,
-	"id": "aelf",
-	"version": "${version}",
-	"name": "AELF",
-	"description": "Implementation de Aelf dans Minecraft.",
-	"authors": [
-		"HoustonLFB"
-	],
-	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
-	},
-	"license": "CC0-1.0",
-	"icon": "assets/aelf-motd/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"server": [
-			"houstonlfb.aelfmotd.Aelf"
-		]
-	},
-	"mixins": [
-		"aelf-motd.mixins.json",
-		{
-			"config": "aelf-motd.client.mixins.json",
-			"environment": "client"
-		}
-	],
-	"depends": {
-		"fabricloader": ">=0.15.11",
-		"minecraft": "~1.21",
-		"java": ">=21",
-		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
-	}
+  "schemaVersion": 1,
+  "id": "aelfmc",
+  "version": "${version}",
+  "name": "AelfMC",
+  "description": "Implementation de AELF dans Minecraft.",
+  "authors": [
+    "HoustonLFB"
+  ],
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/aelf-motd/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "server": [
+      "houstonlfb.aelfmotd.AelfMC"
+    ]
+  },
+  "mixins": [
+    "aelf-motd.mixins.json",
+    {
+      "config": "aelf-motd.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": "~1.21",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
 }
