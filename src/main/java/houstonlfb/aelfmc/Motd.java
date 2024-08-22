@@ -80,7 +80,7 @@ public class Motd {
         });
     }
 
-    private static String couleur(String couleur) {
+    public static String couleur(String couleur) {
         return switch (couleur) {
             case "rouge" -> "§4";
             case "violet" -> "§5";
@@ -91,7 +91,7 @@ public class Motd {
         };
     }
 
-    private static String extractValue(String json, String key) {
+    public static String extractValue(String json, String key) {
         // Trouver la position de la clé
         int startIndex = json.indexOf("\"" + key + "\":");
         if (startIndex == -1) {
@@ -158,7 +158,7 @@ public class Motd {
         return currentDate.toString();
     }
 
-    private static StringBuilder apiCall() throws IOException {
+    public static StringBuilder apiCall() throws IOException {
 
         String currentDate = currentDate();
         // URL de l'API
