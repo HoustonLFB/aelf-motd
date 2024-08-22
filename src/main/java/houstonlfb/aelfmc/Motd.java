@@ -1,4 +1,4 @@
-package houstonlfb.aelfmotd;
+package houstonlfb.aelfmc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package houstonlfb.aelfmotd;
+package houstonlfb.aelfmc;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.server.command.CommandManager;

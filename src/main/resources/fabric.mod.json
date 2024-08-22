@@ -8,24 +8,16 @@
     "HoustonLFB"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "sources": "https://github.com/HoustonLFB/aelf"
   },
   "license": "CC0-1.0",
-  "icon": "assets/aelf-motd/icon.png",
+  "icon": "assets/aelfmc/icon.png",
   "environment": "*",
   "entrypoints": {
     "server": [
-      "houstonlfb.aelfmotd.AelfMC"
+      "houstonlfb.aelfmc.AelfMC"
     ]
   },
-  "mixins": [
-    "aelf-motd.mixins.json",
-    {
-      "config": "aelf-motd.client.mixins.json",
-      "environment": "client"
-    }
-  ],
   "depends": {
     "fabricloader": ">=0.15.11",
     "minecraft": "~1.21",
