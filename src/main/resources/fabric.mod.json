@@ -1,11 +1,11 @@
 {
 	"schemaVersion": 1,
-	"id": "aelf-motd",
+	"id": "aelf",
 	"version": "${version}",
-	"name": "AELF-MOTD",
-	"description": "Affiche en MOTD les informations lithurgiques du jour.",
+	"name": "AELF",
+	"description": "Implementation de Aelf dans Minecraft.",
 	"authors": [
-		"Me!"
+		"HoustonLFB"
 	],
 	"contact": {
 		"homepage": "https://fabricmc.net/",
@@ -15,11 +15,8 @@
 	"icon": "assets/aelf-motd/icon.png",
 	"environment": "*",
 	"entrypoints": {
-		"main": [
-			"houstonlfb.aelfmotd.AELFMOTD"
-		],
-		"client": [
-			"houstonlfb.aelfmotd.AELFMOTDClient"
+		"server": [
+			"houstonlfb.aelfmotd.Aelf"
 		]
 	},
 	"mixins": [
